@@ -1,0 +1,1 @@
+java -DPORT=2551 -Dconfig.resource=/seed.conf -jar target/scala-2.11/gatling-cluster-assembly-1.0.jar

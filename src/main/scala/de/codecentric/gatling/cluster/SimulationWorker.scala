@@ -9,12 +9,12 @@ import io.gatling.app.Gatling
   */
 class SimulationWorker extends Actor {
   override def receive: Receive = {
-    case Go => Gatling.main(Array("-s", "de.codecentric.gatling.SimpleSimulation"))
+    case Go(clazz) => Gatling.main(Array("-s", clazz))
   }
 }
 
 object SimulationWorker {
 
-  case object Go
+  case class Go(clazz: String)
 
 }

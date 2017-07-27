@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.BroadcastPool
 import de.codecentric.gatling.cluster.SimulationCoordinator.StartSimulation
-import de.codecentric.gatling.cluster.SimulationWorker.Go
+import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
+
 import scala.concurrent.duration._
 
 /**
@@ -13,10 +14,11 @@ import scala.concurrent.duration._
 class SimulationCoordinator extends Actor with ActorLogging {
 
   def createWorkerRouter(): ActorRef = {
+    // TODO make number configurable
     context.actorOf(
-      ClusterRouterPool(BroadcastPool(10),
+      ClusterRouterPool(BroadcastPool(1),
         ClusterRouterPoolSettings(
-          totalInstances = 100,
+          totalInstances = 1,
           maxInstancesPerNode = 1,
           allowLocalRoutees = false,
           useRole = None
@@ -30,7 +32,8 @@ class SimulationCoordinator extends Actor with ActorLogging {
       log.info(s"Starting simulation $clazz")
       val router = createWorkerRouter()
       Thread.sleep(3000L)
-      router ! Go(clazz)
+      router.forward(Go(clazz))
+
   }
 }
 

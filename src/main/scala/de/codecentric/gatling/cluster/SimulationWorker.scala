@@ -11,18 +11,11 @@ import scala.io.Source
 /**
   * Created by ronny on 21.07.17.
   */
-class SimulationWorker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLogging {
+class SimulationWorker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLogging with SimulationLogReader {
 
   val SIMULATION_CLASS_OPTION = "-s"
 
   val NO_REPORTS_OPTION = "-nr"
-
-  def readLogFile(): String = {
-    val resultsDirectory = new File("results")
-    val newestDirectory = resultsDirectory.listFiles().maxBy(_.lastModified())
-    val simulationLog = newestDirectory.listFiles().head
-    Source.fromFile(simulationLog, "UTF-8").mkString
-  }
 
   override def receive: Receive = {
     case Go(clazz, starter) =>

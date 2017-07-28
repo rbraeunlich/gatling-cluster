@@ -1,16 +1,11 @@
 package de.codecentric.gatling.cluster
 
 import java.io.File
-import java.util.Collections
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
 import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunnerWrapper}
-import io.gatling.app.Gatling
-import io.gatling.core.ConfigKeys
-import io.gatling.core.stats.writer.FileDataWriterType
 
-import scala.collection.mutable
 import scala.io.Source
 
 /**
@@ -34,7 +29,7 @@ class SimulationWorker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLo
       log.info(s"Starting simulation $clazz")
       val configuration = GatlingConfigBuilder.config()
         .withNoReports()
-        .withDataWriter(FileDataWriterType.name)
+        .withFileDataWriter()
         .withSimulationClass(clazz)
         .build()
       wrapper.run(configuration)

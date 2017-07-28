@@ -1,20 +1,14 @@
 package de.codecentric.gatling.cluster
 
 import java.io.{File, PrintWriter}
-import java.util.{Collections, UUID}
+import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.BroadcastPool
 import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
 import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
 import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunnerWrapper}
-import io.gatling.app.Gatling
-import io.gatling.core.ConfigKeys
-import io.gatling.core.stats.writer.FileDataWriterType
-
-import scala.collection.mutable
-import scala.concurrent.duration._
 
 /**
   * Created by ronny on 21.07.17.
@@ -54,8 +48,8 @@ class SimulationCoordinator extends Actor with ActorLogging {
       starter ! Results(logContent)
   }
 
-  def generateReport() = {
-    val configuration = GatlingConfigBuilder.config().withReportsOnly().build()
+  def generateReport(): Unit = {
+    val configuration = GatlingConfigBuilder.config().withReportsOnly("collect").build()
     new GatlingRunnerWrapper().run(configuration)
   }
 }

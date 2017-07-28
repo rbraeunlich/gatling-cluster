@@ -13,13 +13,12 @@ import scala.collection.mutable
 
 class GatlingConfigBuilder {
 
-  def withReportsOnly(): GatlingConfigBuilder = {
-    config.put(ConfigKeys.core.directory.ReportsOnly, "collect")
+  private val config: mutable.Map[String, Any] = mutable.Map()
+
+  def withReportsOnly(directoryName: String): GatlingConfigBuilder = {
+    config.put(ConfigKeys.core.directory.ReportsOnly, directoryName)
     this
   }
-
-
-  private val config: mutable.Map[String, Any] = mutable.Map()
 
   def withNoReports(): GatlingConfigBuilder = {
     config.put(ConfigKeys.charting.NoReports, true)
@@ -31,7 +30,7 @@ class GatlingConfigBuilder {
     this
   }
 
-  def withDataWriter(writer: String): GatlingConfigBuilder = {
+  def withFileDataWriter(): GatlingConfigBuilder = {
     config.put(ConfigKeys.data.Writers, Collections.singleton(FileDataWriterType.name))
     this
   }

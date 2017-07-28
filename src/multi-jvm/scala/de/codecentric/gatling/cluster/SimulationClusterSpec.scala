@@ -5,7 +5,7 @@ import akka.cluster.Cluster
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.remote.testkit.{MultiNodeSpec, MultiNodeSpecCallbacks}
 import akka.testkit.ImplicitSender
-import de.codecentric.gatling.cluster.SimulationCoordinator.StartSimulation
+import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
 import de.codecentric.gatling.cluster.SimulationWorker.Finished
 import org.scalatest.{BeforeAndAfterAll, MustMatchers, WordSpecLike}
 
@@ -51,7 +51,7 @@ class SimulationClusterSpec extends MultiNodeSpec(SimulationClusterSpecConfig)
       runOn(coordinator) {
         val coordinator = system.actorOf(Props[SimulationCoordinator], "coordinator")
         coordinator ! StartSimulation("de.codecentric.gatling.cluster.SimpleSimulation")
-        expectMsg(10.seconds, Finished)
+        expectMsgClass(10.seconds, classOf[Results])
       }
       enterBarrier("simulation-done")
     }

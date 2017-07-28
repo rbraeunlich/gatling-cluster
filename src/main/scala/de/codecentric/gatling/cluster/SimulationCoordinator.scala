@@ -3,7 +3,7 @@ package de.codecentric.gatling.cluster
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.BroadcastPool
-import de.codecentric.gatling.cluster.SimulationCoordinator.StartSimulation
+import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
 import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
 
 import scala.concurrent.duration._
@@ -32,13 +32,18 @@ class SimulationCoordinator extends Actor with ActorLogging {
       log.info(s"Starting simulation $clazz")
       val router = createWorkerRouter()
       Thread.sleep(3000L)
-      router.forward(Go(clazz))
+      router ! Go(clazz, sender())
 
+    case Finished(logContent, starter) =>
+      log.info(s"Simulation finished with content $logContent")
+      starter ! Results(logContent)
   }
 }
 
 object SimulationCoordinator {
 
   case class StartSimulation(clazz: String)
+
+  case class Results(log: String)
 
 }

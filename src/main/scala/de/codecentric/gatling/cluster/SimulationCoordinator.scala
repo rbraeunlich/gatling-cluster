@@ -8,6 +8,7 @@ import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.BroadcastPool
 import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
 import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
+import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunnerWrapper}
 import io.gatling.app.Gatling
 import io.gatling.core.ConfigKeys
 import io.gatling.core.stats.writer.FileDataWriterType
@@ -30,7 +31,7 @@ class SimulationCoordinator extends Actor with ActorLogging {
           allowLocalRoutees = false,
           useRole = None
         )
-      ).props(Props[SimulationWorker]), name = "worker-router"
+      ).props(SimulationWorker.props), name = "worker-router"
     )
   }
 
@@ -54,8 +55,8 @@ class SimulationCoordinator extends Actor with ActorLogging {
   }
 
   def generateReport() = {
-    val configuration = mutable.Map(ConfigKeys.core.directory.ReportsOnly -> "collect")
-    Gatling.fromMap(configuration)
+    val configuration = GatlingConfigBuilder.config().withReportsOnly().build()
+    new GatlingRunnerWrapper().run(configuration)
   }
 }
 

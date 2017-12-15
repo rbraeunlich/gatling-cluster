@@ -22,8 +22,7 @@ class SimulationCoordinator extends Actor with ActorLogging {
         ClusterRouterPoolSettings(
           totalInstances = 1,
           maxInstancesPerNode = 1,
-          allowLocalRoutees = false,
-          useRole = None
+          allowLocalRoutees = false
         )
       ).props(SimulationWorker.props), name = "worker-router"
     )

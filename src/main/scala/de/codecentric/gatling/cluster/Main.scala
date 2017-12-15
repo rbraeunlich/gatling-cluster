@@ -13,8 +13,9 @@ object Main extends App {
 
   if(system.settings.config.getStringList("akka.cluster.roles").contains("master")) {
     Cluster(system).registerOnMemberUp {
-      val coordinator = system.actorOf(Props[SimulationCoordinator], "receptionist")
+      val coordinator = system.actorOf(Props[SimulationCoordinator], "coordinator")
       println("Master node is ready.")
+      //TODO remove the hard coded class
       coordinator ! StartSimulation("de.codecentric.gatling.cluster.SimpleSimulation")
       system.actorOf(Props(new ClusterDomainEventListener), "cluster-listener")
     }

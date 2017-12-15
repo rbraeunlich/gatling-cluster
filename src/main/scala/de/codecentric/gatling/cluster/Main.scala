@@ -1,9 +1,11 @@
 package de.codecentric.gatling.cluster
 
-import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, Props}
 import akka.cluster.Cluster
-import de.codecentric.gatling.cluster.SimulationCoordinator.StartSimulation
+import com.typesafe.config.ConfigFactory
+import de.codecentric.gatling.cluster.simulation.Coordinator
+import de.codecentric.gatling.cluster.simulation.Coordinator.StartSimulation
+import de.codecentric.gatling.cluster.state.ClusterDomainEventListener
 
 object Main extends App {
   val config = ConfigFactory.load()
@@ -13,7 +15,7 @@ object Main extends App {
 
   if(system.settings.config.getStringList("akka.cluster.roles").contains("master")) {
     Cluster(system).registerOnMemberUp {
-      val coordinator = system.actorOf(Props[SimulationCoordinator], "coordinator")
+      val coordinator = system.actorOf(Props[Coordinator], "coordinator")
       println("Master node is ready.")
       //TODO remove the hard coded class
       coordinator ! StartSimulation("de.codecentric.gatling.cluster.SimpleSimulation")

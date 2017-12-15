@@ -1,21 +1,22 @@
-package de.codecentric.gatling.cluster
+package de.codecentric.gatling.cluster.simulation
 
 import java.util.Collections
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestActor, TestKit, TestProbe}
-import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
+import akka.testkit.{ImplicitSender, TestKit}
+import de.codecentric.gatling.cluster.StopSystemAfterAll
+import de.codecentric.gatling.cluster.simulation.Worker.{Finished, Go}
 import de.codecentric.gatling.cluster.wrapper.GatlingRunnerWrapper
 import io.gatling.core.ConfigKeys
 import io.gatling.core.stats.writer.FileDataWriterType
-import org.scalatest.{Matchers, WordSpec, WordSpecLike}
+import org.scalatest.{Matchers, WordSpecLike}
 
 import scala.collection.mutable
 
 /**
   * Created by ronny on 28.07.17.
   */
-class SimulationWorkerSpec extends TestKit(ActorSystem("SimulationWorkerSpec"))
+class WorkerSpec extends TestKit(ActorSystem("WorkerSpec"))
   with WordSpecLike
   with Matchers
   with StopSystemAfterAll
@@ -24,7 +25,7 @@ class SimulationWorkerSpec extends TestKit(ActorSystem("SimulationWorkerSpec"))
   "SimulationWorker" must {
     "start Gatling upon Go message" in {
       val wrapper = new NullGatlingRunnerWrapper
-      val actor = system.actorOf(Props(new SimulationWorker(wrapper) with NullSimulationLogReader))
+      val actor = system.actorOf(Props(new Worker(wrapper) with NullSimulationLogReader))
 
       actor ! Go("nonExistingClazz", self)
 
@@ -33,7 +34,7 @@ class SimulationWorkerSpec extends TestKit(ActorSystem("SimulationWorkerSpec"))
     }
     "create the correct configuration" in {
       val wrapper = new NullGatlingRunnerWrapper
-      val actor = system.actorOf(Props(new SimulationWorker(wrapper) with NullSimulationLogReader))
+      val actor = system.actorOf(Props(new Worker(wrapper) with NullSimulationLogReader))
       val clazz = "nonExistingClazz"
 
       actor ! Go(clazz, self)
@@ -46,7 +47,7 @@ class SimulationWorkerSpec extends TestKit(ActorSystem("SimulationWorkerSpec"))
     }
     "send a Finished message containing the log and a reference to the initiator" in {
       val wrapper = new NullGatlingRunnerWrapper
-      val actor = system.actorOf(Props(new SimulationWorker(wrapper) with NullSimulationLogReader))
+      val actor = system.actorOf(Props(new Worker(wrapper) with NullSimulationLogReader))
       val clazz = "nonExistingClazz"
 
       actor ! Go(clazz, self)
@@ -67,7 +68,7 @@ class SimulationWorkerSpec extends TestKit(ActorSystem("SimulationWorkerSpec"))
   }
 
   private trait NullSimulationLogReader {
-    this: SimulationLogReader =>
+    this: GatlingSimulationLogReader =>
 
     override def readLogFile(): String = "null"
   }

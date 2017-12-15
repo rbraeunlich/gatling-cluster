@@ -1,15 +1,14 @@
-package de.codecentric.gatling.cluster
+package de.codecentric.gatling.cluster.state
 
-import akka.actor.{ActorLogging, Actor}
-
-import akka.cluster.{MemberStatus, Cluster}
+import akka.actor.{Actor, ActorLogging}
 import akka.cluster.ClusterEvent._
+import akka.cluster.{Cluster, MemberStatus}
 
 class ClusterDomainEventListener extends Actor
   with ActorLogging {
   Cluster(context.system).subscribe(self, classOf[ClusterDomainEvent])
 
-  def receive = {
+  def receive: PartialFunction[Any, Unit] = {
     case MemberUp(member) =>
       log.info(s"$member UP.")
     case MemberExited(member) =>

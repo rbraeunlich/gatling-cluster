@@ -1,4 +1,4 @@
-package de.codecentric.gatling.cluster
+package de.codecentric.gatling.cluster.simulation
 
 import java.io.{File, PrintWriter}
 import java.util.UUID
@@ -6,14 +6,14 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.routing.BroadcastPool
-import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
-import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
+import de.codecentric.gatling.cluster.simulation.Coordinator.{Results, StartSimulation}
+import de.codecentric.gatling.cluster.simulation.Worker.{Finished, Go}
 import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunnerWrapper}
 
 /**
   * Created by ronny on 21.07.17.
   */
-class SimulationCoordinator extends Actor with ActorLogging {
+class Coordinator extends Actor with ActorLogging {
 
   def createWorkerRouter(): ActorRef = {
     // TODO make number configurable
@@ -24,7 +24,7 @@ class SimulationCoordinator extends Actor with ActorLogging {
           maxInstancesPerNode = 1,
           allowLocalRoutees = false
         )
-      ).props(SimulationWorker.props), name = "worker-router"
+      ).props(Worker.props), name = "worker-router"
     )
   }
 
@@ -53,7 +53,7 @@ class SimulationCoordinator extends Actor with ActorLogging {
   }
 }
 
-object SimulationCoordinator {
+object Coordinator {
 
   case class StartSimulation(clazz: String)
 

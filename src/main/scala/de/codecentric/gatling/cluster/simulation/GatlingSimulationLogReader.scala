@@ -1,4 +1,4 @@
-package de.codecentric.gatling.cluster
+package de.codecentric.gatling.cluster.simulation
 
 import java.io.File
 
@@ -7,7 +7,7 @@ import scala.io.Source
 /**
   * Created by ronny on 28.07.17.
   */
-trait SimulationLogReader {
+trait GatlingSimulationLogReader {
 
   def readLogFile(): String = {
     val resultsDirectory = new File("results")

@@ -3,11 +3,10 @@ package de.codecentric.gatling.cluster
 import akka.actor.{Address, Props}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
-import akka.remote.testkit.{MultiNodeSpec, MultiNodeSpecCallbacks}
+import akka.remote.testkit.MultiNodeSpec
 import akka.testkit.ImplicitSender
-import de.codecentric.gatling.cluster.SimulationCoordinator.{Results, StartSimulation}
-import de.codecentric.gatling.cluster.SimulationWorker.Finished
-import org.scalatest.{BeforeAndAfterAll, MustMatchers, WordSpecLike}
+import de.codecentric.gatling.cluster.simulation.Coordinator
+import de.codecentric.gatling.cluster.simulation.Coordinator.{Results, StartSimulation}
 
 import scala.concurrent.duration._
 
@@ -49,7 +48,7 @@ class SimulationClusterSpec extends MultiNodeSpec(SimulationClusterSpecConfig)
 
     "execute a simple simulation" in within(20.seconds) {
       runOn(coordinator) {
-        val coordinator = system.actorOf(Props[SimulationCoordinator], "coordinator")
+        val coordinator = system.actorOf(Props[Coordinator], "coordinator")
         coordinator ! StartSimulation("de.codecentric.gatling.cluster.SimpleSimulation")
         expectMsgClass(10.seconds, classOf[Results])
       }

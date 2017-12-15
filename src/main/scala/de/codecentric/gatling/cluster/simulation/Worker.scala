@@ -1,17 +1,13 @@
-package de.codecentric.gatling.cluster
-
-import java.io.File
+package de.codecentric.gatling.cluster.simulation
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import de.codecentric.gatling.cluster.SimulationWorker.{Finished, Go}
+import de.codecentric.gatling.cluster.simulation.Worker.{Finished, Go}
 import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunnerWrapper}
-
-import scala.io.Source
 
 /**
   * Created by ronny on 21.07.17.
   */
-class SimulationWorker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLogging with SimulationLogReader {
+class Worker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLogging with GatlingSimulationLogReader {
 
   val SIMULATION_CLASS_OPTION = "-s"
 
@@ -31,12 +27,12 @@ class SimulationWorker(wrapper: GatlingRunnerWrapper) extends Actor with ActorLo
   }
 }
 
-object SimulationWorker {
+object Worker {
 
   case class Go(clazz: String, starter: ActorRef)
 
   case class Finished(logContent: String, starter: ActorRef)
 
-  def props: Props = Props(classOf[SimulationWorker], new GatlingRunnerWrapper)
+  def props: Props = Props(classOf[Worker], new GatlingRunnerWrapper)
 
 }

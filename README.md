@@ -16,3 +16,9 @@
 3. The Master node should start the simulation on the single worker node and collection the results.
 
 Find the results under `results/collect`
+
+## Interna
+
+### Config files
+
+`src/main/resources` contains the config files for the three different types of cluster node that exist.

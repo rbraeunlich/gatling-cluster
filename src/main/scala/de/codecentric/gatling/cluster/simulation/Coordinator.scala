@@ -44,6 +44,7 @@ class Coordinator extends Actor with ActorLogging {
       writer.write(logContent)
       writer.flush()
       generateReport()
+      // TODO clean up the simulation files
       starter ! Results(logContent)
   }
 

@@ -29,11 +29,13 @@ Since we are in a test environment, one seed and one master node should be enoug
 Due to compilation and everything related to it the worker nodes you distribute have to contain you simulation class inside their
 JAR or at least within the classpath. The main class only sends the classname as string across the network, not the compiled file.
 
-The recommendation is to create fat jars.
+Therefore, the recommendation is to create fat jars.
 
-#### Startup via terminal
+#### Startup via main method
 
-TODO
+To ease the developer burden simply create a Main class that extends `MetaSimulation`. That main class has to provide a number
+for the intended worker nodes. Within the main method (or the object body if you extend `App`) call `startSimulation` with the class of the simulation you want 
+to execute. This will spin up a master node locally, which joins the cluster and starts the simulation.
 
 #### Startup via Docker
 
@@ -51,15 +53,15 @@ TODO
 ## Manual Testing
 
 1. Run `sbt assembly`
-2. Start the different instances the following way:
+2. Start a seed node and at least one worker node this way:
 
     * java -DPORT=2551 -Dconfig.resource=/seed.conf -jar target/scala-2.12/gatling-cluster-assembly-1.0.jar
 
-    * java -DPORT=2554 -Dconfig.resource=/master.conf -jar target/scala-2.12/gatling-cluster-assembly-1.0.jar
-
     * java -DPORT=2556 -Dconfig.resource=/worker.conf -jar target/scala-2.12/gatling-cluster-assembly-1.0.jar
+
+3. Starte the Main class under src/test
     
-3. The Master node should start the simulation on the single worker node and collection the results.
+4. The main class starts a master node on the localhost running on port 2554. This should execute the simulation class.
 
 Find the results under `results/collect`
 

@@ -26,8 +26,7 @@ lazy val gatlingCluster = project
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value
         oldStrategy(x)
-    },
-    mainClass in assembly := Some("de.codecentric.gatling.cluster.Main")
+    }
   )
   .configs(MultiJvm)
 

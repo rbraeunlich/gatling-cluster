@@ -4,7 +4,8 @@ import de.codecentric.gatling.cluster.SimpleSimulation
 import de.codecentric.gatling.cluster.api.MetaSimulation
 
 object Main extends App with MetaSimulation {
-  override val numberOfInstances = 1
+  // TODO set the min-nr of worker to the same value
+  override val numberOfInstances = 2
 
   startSimulation(classOf[SimpleSimulation])
 }

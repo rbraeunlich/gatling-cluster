@@ -18,14 +18,13 @@ trait MetaSimulation {
 
     println(s"Starting node with roles: ${Cluster(system).selfRoles}")
 
-    if(system.settings.config.getStringList("akka.cluster.roles").contains("master")) {
+    if (system.settings.config.getStringList("akka.cluster.roles").contains("master")) {
       Cluster(system).registerOnMemberUp {
-        val coordinator = system.actorOf(Props[Coordinator], "coordinator")
+        val coordinator = system.actorOf(Props(classOf[Coordinator], numberOfInstances), "coordinator")
         println("Master node is ready.")
         coordinator ! StartSimulation(simulationClazz.getName)
         system.actorOf(Props(new ClusterDomainEventListener), "cluster-listener")
       }
-
       // TODO shut down upon answers
     }
   }

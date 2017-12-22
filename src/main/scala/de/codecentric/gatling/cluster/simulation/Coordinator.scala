@@ -13,14 +13,13 @@ import de.codecentric.gatling.cluster.wrapper.{GatlingConfigBuilder, GatlingRunn
 /**
   * Created by ronny on 21.07.17.
   */
-class Coordinator extends Actor with ActorLogging {
+class Coordinator(numberOfWorkers: Int) extends Actor with ActorLogging {
 
   def createWorkerRouter(): ActorRef = {
-    // TODO make number configurable
     context.actorOf(
-      ClusterRouterPool(BroadcastPool(1),
+      ClusterRouterPool(BroadcastPool(numberOfWorkers),
         ClusterRouterPoolSettings(
-          totalInstances = 1,
+          totalInstances = numberOfWorkers,
           maxInstancesPerNode = 1,
           allowLocalRoutees = false
         )
